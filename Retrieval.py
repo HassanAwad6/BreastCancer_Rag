@@ -25,6 +25,10 @@ for document in documents:
     chunks.append({
         "chunk_id": metadata["chunk_id"],
         "source": metadata["source"],
+        "source_name": metadata.get(
+        "source_name",
+        metadata["source"]
+    ),
         "header": metadata["header"],
         "number": metadata["number"],
         "subheader": metadata["subheader"],
@@ -218,6 +222,7 @@ def hybrid_query(
             ),
             # Metadata
             "source": chunk["source"],
+            "source_name": chunk["source_name"],
             "header": chunk["header"],
             "section": chunk["number"],
             "section_name": chunk["subheader"],

@@ -111,7 +111,7 @@ def build_context(results):
     context_parts = []
     for result in results:
         context_part = (
-            f"Source: {result['source']}\n"
+            f"Source: {result['source_name']}\n"
             f"Section: {result['section']}\n"
             f"Section Name: {result['section_name']}\n"
             f"Pages: {result['start_page']} - "

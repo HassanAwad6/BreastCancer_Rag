@@ -83,8 +83,14 @@ Recommendations:
 Supporting Evidence:
 - Briefly give the retrieved evidence supporting the recommendations.
 Citation:
-- Give ONLY the source, section, recommendation number, and page information
-  that actually support the answer.
+- Every citation MUST include:
+  1. The full NICE guideline name.
+  2. The section number.
+  3. The recommendation number.
+  4. The exact page number or page range provided in the retrieved context.
+- NEVER omit the page number when giving a citation.
+- Copy the page information exactly from the supporting retrieved chunk.
+- Do not guess or calculate a page number.
 Confidence and Safety:
 - Confidence: High, Medium, or Low.
 - Explain briefly why.

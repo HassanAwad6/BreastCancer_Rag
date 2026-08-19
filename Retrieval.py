@@ -122,8 +122,8 @@ BM25_THRESHOLD = 1.5
 def hybrid_query(
     question,
     top_k=3,
-    semantic_weight=0.5,
-    keyword_weight=0.5
+    semantic_weight=0.65,
+    keyword_weight=0.35
 ):
 
     # A. SEMANTIC RETRIEVAL - BGE

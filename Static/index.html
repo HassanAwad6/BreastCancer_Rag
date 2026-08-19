@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>BreastCancer.ai</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ==========================================
+         APP
+    =========================================== -->
+
+    <div class="app">
+
+
+        <!-- ======================================
+             HEADER
+        ======================================= -->
+
+        <header class="header">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    B
+                </div>
+
+                <div>
+
+                    <div class="brand-name">
+                        BreastCancer<span>.ai</span>
+                    </div>
+
+                    <div class="brand-subtitle">
+                        NICE guideline assistant
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="source-badge">
+
+                <span class="status-dot"></span>
+
+                NICE Guidelines
+
+            </div>
+
+        </header>
+
+
+        <!-- ======================================
+             MAIN CHAT
+        ======================================= -->
+
+        <main class="chat">
+
+
+            <!-- ==================================
+                 EMPTY / WELCOME STATE
+            =================================== -->
+
+            <section
+                class="welcome"
+                id="welcome"
+            >
+
+                <div class="welcome-icon">
+                    ✦
+                </div>
+
+
+                <h1>
+                    Ask about breast cancer guidelines
+                </h1>
+
+
+                <p>
+                    Search recommendations from the selected
+                    NICE breast cancer guidelines using
+                    hybrid semantic and keyword retrieval.
+                </p>
+
+
+                <!-- Suggested questions -->
+
+                <div class="suggestions">
+
+                    <button
+                        class="suggestion"
+                        data-question="What imaging assessment is recommended for advanced breast cancer?"
+                    >
+                        What imaging assessment is recommended for advanced breast cancer?
+                    </button>
+
+
+                    <button
+                        class="suggestion"
+                        data-question="What treatment is recommended for HER2-positive breast cancer?"
+                    >
+                        What treatment is recommended for HER2-positive breast cancer?
+                    </button>
+
+
+                    <button
+                        class="suggestion"
+                        data-question="How should lymphoedema be managed in advanced breast cancer?"
+                    >
+                        How should lymphoedema be managed?
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================================
+                 MESSAGES
+            =================================== -->
+
+            <section
+                class="messages"
+                id="messages"
+            >
+            </section>
+
+
+        </main>
+
+
+        <!-- ======================================
+             COMPOSER
+        ======================================= -->
+
+        <div class="composer-wrapper">
+
+            <form
+                class="composer"
+                id="questionForm"
+            >
+
+                <textarea
+                    id="questionInput"
+                    placeholder="Ask a question about the NICE guidelines..."
+                    rows="1"
+                    maxlength="1000"
+                ></textarea>
+
+
+                <button
+                    type="submit"
+                    class="send-button"
+                    id="sendButton"
+                    aria-label="Send question"
+                >
+
+                    <span>
+                        ↑
+                    </span>
+
+                </button>
+
+            </form>
+
+
+            <p class="disclaimer">
+                Answers are based only on the selected NICE guideline
+                sources and do not replace professional medical judgement.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <script src="/static/app.js"></script>
+
+
+</body>
+
+</html>

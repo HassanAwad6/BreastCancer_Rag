@@ -1,4 +1,6 @@
 import os
+import base64
+from pathlib import Path
 
 import streamlit as st
 from openai import OpenAI
@@ -14,31 +16,225 @@ from Retrieval import hybrid_query
 st.set_page_config(
     page_title="BreastCancer.ai",
     page_icon="🎗️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 
 # =========================================================
-# 2. ENVIRONMENT
+# 2. PROJECT PATHS
+# =========================================================
+
+BASE_DIR = Path(__file__).resolve().parent
+
+UI_DIR = BASE_DIR / "streamlit_ui"
+CSS_DIR = BASE_DIR / "css"
+ASSETS_DIR = BASE_DIR / "assets"
+
+
+# =========================================================
+# 3. FILE HELPER
+# =========================================================
+
+def read_text(path):
+
+    if not path.exists():
+
+        raise FileNotFoundError(
+            f"Required UI file was not found: {path}"
+        )
+
+    return path.read_text(
+        encoding="utf-8"
+    )
+
+# =========================================================
+# 4. LOAD FULL WEBSITE FRONTEND
+# =========================================================
+
+APP_HTML = read_text(
+    UI_DIR / "app_component.html"
+)
+
+APP_JS = read_text(
+    UI_DIR / "app_component.js"
+)
+
+BASE_CSS = read_text(
+    CSS_DIR / "base.css"
+)
+
+SPLASH_CSS = read_text(
+    CSS_DIR / "splash.css"
+)
+
+HOME_CSS = read_text(
+    CSS_DIR / "home.css"
+)
+
+CHAT_CSS = read_text(
+    CSS_DIR / "chat.css"
+)
+
+
+# =========================================================
+# 5. FULL WEBSITE COMPONENT CSS
+# =========================================================
+
+APP_CSS = (
+    BASE_CSS
+    + "\n"
+    + SPLASH_CSS
+    + "\n"
+    + HOME_CSS
+    + "\n"
+    + CHAT_CSS
+    + r"""
+
+    /* =====================================================
+       Streamlit component adjustments
+       ===================================================== */
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+    }
+
+    #bcaiApp {
+        width: 100%;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .bcai-view {
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    .bcai-hidden {
+        display: none !important;
+    }
+
+    .logo-button {
+        border: 0;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    button.nav-item {
+        width: 100%;
+        border: 0;
+        font: inherit;
+        text-align: left;
+    }
+
+    .recent-empty {
+        padding: 10px 12px;
+        font-size: 12px;
+        color: #8b8e99;
+    }
+
+    .answer-body {
+        width: 100%;
+    }
+
+    .answer-body p {
+        margin-top: 10px;
+        line-height: 1.65;
+    }
+
+    .answer-body h3 {
+        margin: 22px 0 9px;
+    }
+
+    .answer-body ul {
+        margin-top: 10px;
+        padding-left: 20px;
+    }
+
+    .answer-body li {
+        margin-bottom: 8px;
+        line-height: 1.55;
+    }
+
+    .send-button:disabled {
+        opacity: 0.5;
+        cursor: default;
+        transform: none !important;
+        box-shadow: none;
+    }
+
+    """
+)
+
+# =========================================================
+# 6. LOGO
+# =========================================================
+
+LOGO_FILE = (
+    ASSETS_DIR
+    /
+    "logo.svg"
+)
+
+
+if LOGO_FILE.exists():
+
+    logo_bytes = (
+        LOGO_FILE
+        .read_bytes()
+    )
+
+    LOGO_DATA_URI = (
+        "data:image/svg+xml;base64,"
+        +
+        base64.b64encode(
+            logo_bytes
+        ).decode(
+            "utf-8"
+        )
+    )
+
+else:
+
+    LOGO_DATA_URI = ""
+
+
+# =========================================================
+# 7. ENVIRONMENT
 # =========================================================
 
 load_dotenv()
 
 
-# First try Streamlit Cloud secrets.
-# If running locally, fall back to .env.
+# First:
+# Streamlit Community Cloud secrets
 try:
-    GROQ_API_KEY = st.secrets.get(
-        "GROQ_API_KEY",
-        None
+
+    GROQ_API_KEY = (
+        st.secrets.get(
+            "GROQ_API_KEY",
+            None
+        )
     )
+
 except Exception:
+
     GROQ_API_KEY = None
 
 
+# Local development fallback
 if not GROQ_API_KEY:
-    GROQ_API_KEY = os.getenv(
-        "GROQ_API_KEY"
+
+    GROQ_API_KEY = (
+        os.getenv(
+            "GROQ_API_KEY"
+        )
     )
 
 
@@ -52,10 +248,12 @@ if not GROQ_API_KEY:
 
 
 # =========================================================
-# 3. GROQ CLIENT
+# 8. GROQ
 # =========================================================
 
-GROQ_MODEL = "openai/gpt-oss-20b"
+GROQ_MODEL = (
+    "openai/gpt-oss-20b"
+)
 
 
 client = OpenAI(
@@ -65,7 +263,7 @@ client = OpenAI(
 
 
 # =========================================================
-# 4. SYSTEM PROMPT
+# 9. SYSTEM PROMPT
 # =========================================================
 
 SYSTEM_PROMPT = """
@@ -122,7 +320,8 @@ Rules:
       directs the reader to.
     - Do not invent or summarize the contents of the referenced guideline
       unless those contents are also present in the retrieved context.
-      
+
+
 OUTPUT RULES:
 
 If the retrieved context directly supports the question:
@@ -174,7 +373,7 @@ Confidence and Safety:
 
 
 # =========================================================
-# 5. BUILD RETRIEVED CONTEXT
+# 10. BUILD RETRIEVED CONTEXT
 # =========================================================
 
 def build_context(results):
@@ -230,7 +429,7 @@ def build_context(results):
 
 
 # =========================================================
-# 6. ASK RAG
+# 11. ASK RAG
 # =========================================================
 
 def ask_rag(question):
@@ -252,9 +451,12 @@ def ask_rag(question):
     if not results:
 
         return {
-            "status": "insufficient",
 
-            "answer": """
+            "status":
+                "insufficient",
+
+            "answer":
+                """
 ### Insufficient Context
 
 The retrieved NICE guideline context does not contain information that supports this question.
@@ -270,7 +472,8 @@ No applicable NICE guideline citation was found for this question.
 - No answer was generated from outside knowledge.
 """,
 
-            "sources": []
+            "sources":
+                []
         }
 
 
@@ -296,7 +499,7 @@ Answer the question using ONLY the retrieved context.
 
 
     # -----------------------------------------------------
-    # GENERATION
+    # GROQ GENERATION
     # -----------------------------------------------------
 
     try:
@@ -311,12 +514,19 @@ Answer the question using ONLY the retrieved context.
 
                 messages=[
                     {
-                        "role": "system",
-                        "content": SYSTEM_PROMPT
+                        "role":
+                            "system",
+
+                        "content":
+                            SYSTEM_PROMPT
                     },
+
                     {
-                        "role": "user",
-                        "content": user_prompt
+                        "role":
+                            "user",
+
+                        "content":
+                            user_prompt
                     }
                 ],
 
@@ -341,34 +551,64 @@ Answer the question using ONLY the retrieved context.
 
         print(
             "Groq error:",
-            error
+            error,
+            flush=True
         )
 
 
         return {
-            "status": "error",
+
+            "status":
+                "error",
 
             "answer":
-                "The AI service is temporarily unavailable.",
+                "The AI service is temporarily unavailable. "
+                "Please try again.",
 
-            "sources": []
+            "sources":
+                []
         }
 
 
     # -----------------------------------------------------
-    # LLM REJECTION
+    # EMPTY RESPONSE
+    # -----------------------------------------------------
+
+    if not answer:
+
+        return {
+
+            "status":
+                "error",
+
+            "answer":
+                "The AI model returned an empty response.",
+
+            "sources":
+                []
+        }
+
+
+    # -----------------------------------------------------
+    # LLM INSUFFICIENT CONTEXT
     # -----------------------------------------------------
 
     if (
+        "Insufficient Context:"
+        in
         answer
-        and
-        "Insufficient Context:" in answer
     ):
 
         return {
-            "status": "insufficient",
-            "answer": answer,
-            "sources": []
+
+            "status":
+                "insufficient",
+
+            "answer":
+                answer,
+
+            "sources":
+                []
         }
 
 
@@ -384,129 +624,210 @@ Answer the question using ONLY the retrieved context.
         sources.append({
 
             "source":
-                result["source_name"],
+                result[
+                    "source_name"
+                ],
 
             "section":
-                result["section"],
+                result[
+                    "section"
+                ],
 
             "section_name":
-                result["section_name"],
+                result[
+                    "section_name"
+                ],
 
             "start_page":
-                result["start_page"],
+                result[
+                    "start_page"
+                ],
 
             "end_page":
-                result["end_page"],
+                result[
+                    "end_page"
+                ],
 
             "chunk_id":
-                result["chunk_id"],
+                result[
+                    "chunk_id"
+                ],
 
             "semantic_score":
-                result["semantic_score"],
+                result[
+                    "semantic_score"
+                ],
 
             "keyword_score":
-                result["keyword_score"],
+                result[
+                    "keyword_score"
+                ],
 
             "hybrid_score":
-                result["hybrid_score"]
+                result[
+                    "hybrid_score"
+                ]
         })
 
 
     return {
-        "status": "success",
-        "answer": answer,
-        "sources": sources
+
+        "status":
+            "success",
+
+        "answer":
+            answer,
+
+        "sources":
+            sources
     }
 
-
 # =========================================================
-# 7. TEMPORARY STREAMLIT TEST UI
-# =========================================================
-#
-# This is NOT your final design.
-# It only verifies that Streamlit can run the full RAG.
-#
-# Your HTML/CSS/JS interface will be connected in Step 2.
+# 12. HIDE STREAMLIT UI
 # =========================================================
 
-st.title(
-    "🎗️ BreastCancer.ai"
+st.markdown(
+    """
+    <style>
+
+    header[data-testid="stHeader"] {
+        display: none !important;
+    }
+
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
+
+    #MainMenu {
+        display: none !important;
+    }
+
+    footer {
+        display: none !important;
+    }
+
+    [data-testid="stAppViewContainer"] {
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+    }
+
+    [data-testid="stMain"] {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    [data-testid="stMainBlockContainer"] {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .stMainBlockContainer {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
-st.caption(
-    "NICE Breast Cancer Guidelines RAG"
+
+# =========================================================
+# 13. SESSION STATE
+# =========================================================
+
+if "rag_response" not in st.session_state:
+    st.session_state.rag_response = None
+
+if "rag_response_id" not in st.session_state:
+    st.session_state.rag_response_id = 0
+
+if "last_request_id" not in st.session_state:
+    st.session_state.last_request_id = None
+
+
+# =========================================================
+# 14. REGISTER FULL WEBSITE COMPONENT
+# =========================================================
+
+app_component = st.components.v2.component(
+    name="breast_cancer_ai_app",
+    html=APP_HTML,
+    css=APP_CSS,
+    js=APP_JS,
+    isolate_styles=False
 )
 
 
-question = st.chat_input(
-    "Ask a question about the NICE guidelines..."
+# =========================================================
+# 15. MOUNT COMPONENT
+# =========================================================
+
+component_result = app_component(
+    data={
+        "response": st.session_state.rag_response,
+        "response_id": st.session_state.rag_response_id,
+        "logo_data_uri": LOGO_DATA_URI
+    },
+    key="breast_cancer_ai_app_instance",
+    on_submit_change=lambda: None,
+    width="stretch",
+    height="content"
 )
 
 
-if question:
+# =========================================================
+# 16. RECEIVE QUESTION FROM JAVASCRIPT
+# =========================================================
 
-    # User question
-    with st.chat_message(
-        "user"
+submit_payload = getattr(
+    component_result,
+    "submit",
+    None
+)
+
+
+# =========================================================
+# 17. PROCESS NEW REQUEST
+# =========================================================
+
+if submit_payload:
+
+    question = str(
+        submit_payload.get(
+            "question",
+            ""
+        )
+    ).strip()
+
+    request_id = str(
+        submit_payload.get(
+            "request_id",
+            ""
+        )
+    )
+
+    if (
+        question
+        and request_id
+        and request_id != st.session_state.last_request_id
     ):
 
-        st.write(
+        # Prevent the same request from being processed twice.
+        st.session_state.last_request_id = request_id
+
+        # Run the existing RAG without changing Retrieval.py.
+        result = ask_rag(
             question
         )
 
+        # Send the result back to the frontend on the next rerun.
+        st.session_state.rag_response = result
+        st.session_state.rag_response_id += 1
 
-    # AI
-    with st.chat_message(
-        "assistant"
-    ):
-
-        with st.spinner(
-            "Searching NICE guidelines..."
-        ):
-
-            result = ask_rag(
-                question
-            )
-
-
-        st.markdown(
-            result["answer"]
-        )
-
-
-        # ---------------------------------------------
-        # SOURCES
-        # ---------------------------------------------
-
-        if (
-            result["status"] == "success"
-            and
-            result["sources"]
-        ):
-
-            with st.expander(
-                "Retrieved NICE evidence"
-            ):
-
-                for index, source in enumerate(
-                    result["sources"],
-                    start=1
-                ):
-
-                    st.markdown(
-                        f"""
-**Source {index}**
-
-**Guideline:** {source["source"]}
-
-**Section:** {source["section"]}
-
-**Section name:** {source["section_name"]}
-
-**Pages:** {source["start_page"]}–{source["end_page"]}
-
-**Chunk ID:** {source["chunk_id"]}
-"""
-                    )
-
-                    st.divider()
+        st.rerun()

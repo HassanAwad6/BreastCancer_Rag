@@ -197,9 +197,55 @@ if question:
                 question,
                 top_k=3
             )
-            # THRESHOLD REJECTION
-            if not results:
-                answer = """
+    print("\n==============================")
+    print("QUESTION:", question)
+    print("==============================")
+
+    for result in results:
+
+        print("\nRANK:", result["rank"])
+
+        print(
+            "SECTION:",
+            result["section"]
+        )
+
+        print(
+            "SECTION NAME:",
+            result["section_name"]
+        )
+
+        print(
+            "BGE:",
+            result["semantic_score"]
+        )
+
+        print(
+            "BM25:",
+            result["keyword_score"]
+        )
+
+        print(
+            "HYBRID:",
+            result["hybrid_score"]
+        )
+
+        print(
+            "PAGES:",
+            result["start_page"],
+            "-",
+            result["end_page"]
+        )
+
+        print(
+            "TEXT:",
+            result["text"][:500]
+        )
+
+        print("------------------------------")
+        # THRESHOLD REJECTION
+    if not results:
+        answer = """
 ### Insufficient Context
 The retrieved NICE guideline context does not contain information that supports this question.
 ### Citation
@@ -211,7 +257,7 @@ No applicable NICE guideline citation was found for this question.
 """
 
             # QUESTION PASSED THRESHOLD
-            else:
+    else:
                 context = build_context(
                     results
                 )
@@ -260,7 +306,7 @@ No applicable NICE guideline citation was found for this question.
                     )
 
         # Display answer
-        st.markdown(
+    st.markdown(
             answer
         )
     # Save assistant message

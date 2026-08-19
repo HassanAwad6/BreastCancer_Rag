@@ -160,7 +160,12 @@ def hybrid_query(
     best_keyword_score = np.max(
     keyword_scores
     )
-
+    # TEMPORARY TEST
+    print("\n------------------------------")
+    print("QUESTION:", question)
+    print("Best BGE:", best_semantic_score)
+    print("Best BM25:", best_keyword_score)
+    print("------------------------------")
     if (
         best_semantic_score < SEMANTIC_THRESHOLD
         and

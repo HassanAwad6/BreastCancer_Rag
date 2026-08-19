@@ -1,0 +1,11 @@
+.splash-body { overflow: hidden; }
+.splash-page { position: relative; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #fff; transition: opacity .5s ease, transform .5s ease; }
+.splash-page.fade-out { opacity: 0; transform: scale(1.015); }
+.splash-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 52px; transform: translateY(-24px); }
+.splash-logo { width: min(500px, 82vw); height: auto; }
+.splash-assistant-row { display: flex; align-items: center; gap: 18px; }
+.splash-assistant-row p { font-size: clamp(22px, 2.6vw, 36px); font-weight: 400; letter-spacing: -.5px; }
+.splash-glow { position: absolute; border-radius: 50%; filter: blur(95px); pointer-events: none; }
+.splash-glow-top { width: 520px; height: 520px; top: -300px; right: -170px; background: rgba(255,120,165,.22); }
+.splash-glow-bottom { width: 580px; height: 580px; bottom: -350px; left: -260px; background: rgba(255,120,165,.20); }
+@media (max-width: 650px) { .splash-content { gap: 36px; } .splash-assistant-row { gap: 12px; } .orb-small { width: 46px; height: 46px; } }

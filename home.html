@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breast Cancer AI - Home</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <a class="sidebar-logo" href="home.html" aria-label="Breast Cancer AI home">
+          <img src="assets/logo.svg" alt="Breast Cancer AI">
+        </a>
+
+        <a class="new-chat-button" href="home.html">+ New Chat</a>
+
+        <label class="sidebar-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.5 16.5"></path>
+          </svg>
+          <input type="text" placeholder="Search chats ..." aria-label="Search chats">
+        </label>
+
+        <nav class="sidebar-nav" aria-label="Primary navigation">
+          <a class="nav-item active" href="home.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 5H20V16H8L4 20V5Z"></path></svg>
+            <span>Chats</span>
+          </a>
+          <a class="nav-item" href="uploaded-pdfs.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M6 2H15L20 7V22H6V2Z"></path><path d="M15 2V7H20"></path></svg>
+            <span>Uploaded PDFs</span>
+          </a>
+          <a class="nav-item" href="citation-history.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7V12L15 15"></path></svg>
+            <span>Citation history</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="user-avatar" aria-hidden="true">M</div>
+        <div class="user-copy">
+          <strong>Menna Ahmed</strong>
+          <span>Clinical workspace</span>
+        </div>
+        <button class="icon-button settings-button" type="button" aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M4 7H9M15 7H20M4 17H13M17 17H20"></path></svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="home-main" id="homeMain">
+      <div class="ambient-grid"></div>
+      <div class="ambient-glow ambient-glow-main"></div>
+
+      <div class="home-top-actions">
+        <div class="status-pill"><span class="status-dot"></span><span>Clinical RAG</span><strong>Ready</strong></div>
+        <button class="dark-button" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 3V15"></path><path d="M8 7L12 3L16 7"></path><path d="M5 12V20H19V12"></path></svg>
+          Export chat
+        </button>
+      </div>
+
+      <section class="home-hero">
+        <div class="hero-orb-wrap" aria-hidden="true">
+          <span class="orb-ring ring-one"></span>
+          <span class="orb-ring ring-two"></span>
+          <div class="orb orb-large">
+            <span class="orb-layer orb-layer-a"></span>
+            <span class="orb-layer orb-layer-b"></span>
+            <span class="orb-highlight"></span>
+          </div>
+        </div>
+
+        <div class="assistant-ready"><span class="status-dot"></span>AI assistant ready</div>
+
+        <h1>Welcome back, <span>Menna</span></h1>
+        <h2>What would you like to explore in your clinical guidelines?</h2>
+        <p class="hero-copy">Ask questions and receive evidence-grounded answers from the breast cancer clinical guidelines available in the system.</p>
+
+        <div class="question-area">
+          <div class="question-box" id="questionBox">
+            <div class="question-leading-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L13.8 7.2L19 9L13.8 10.8L12 16L10.2 10.8L5 9L10.2 7.2L12 2Z"></path></svg>
+            </div>
+            <input id="questionInput" type="text" placeholder="Ask a clinical question..." autocomplete="off">
+            <button class="icon-button" type="button" aria-label="Use microphone">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11C5 15 8 18 12 18C16 18 19 15 19 11"></path><path d="M12 18V22"></path></svg>
+            </button>
+            <button class="send-button" id="homeSendButton" type="button" aria-label="Send question">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M21 3L10 14"></path><path d="M21 3L14 21L10 14L3 10L21 3Z"></path></svg>
+            </button>
+          </div>
+
+          <div class="grounding-row" aria-label="Assistant capabilities">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3L19 6V11C19 16 16 19 12 21C8 19 5 16 5 11V6L12 3Z"></path><path d="M9 12L11 14L15 10"></path></svg>Grounded answers</span>
+            <i></i>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2H15L20 7V22H6V2Z"></path></svg>Source citations</span>
+            <i></i>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"></circle><path d="M12 8V12L15 14"></path></svg>Evidence traceability</span>
+          </div>
+        </div>
+
+        <div class="quick-actions-heading">
+          <span>QUICK ACTIONS</span>
+          <small>Start with a common clinical task</small>
+        </div>
+
+        <div class="suggestion-grid">
+          <button class="suggestion-card" type="button" data-question="Summarize the breast cancer guidelines.">
+            <div class="card-icon-row"><span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3H18V21H6V3Z"></path><path d="M9 8H15M9 12H15M9 16H13"></path></svg></span><span class="card-arrow">↗</span></div>
+            <span class="card-tag">SUMMARIZE</span>
+            <strong>Summarize a guideline</strong>
+            <p>Turn guideline sections into clear clinical points.</p>
+          </button>
+
+          <button class="suggestion-card" type="button" data-question="Compare recommendations across the breast cancer guidelines.">
+            <div class="card-icon-row"><span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 4L4 8L8 12M4 8H16M16 12L20 16L16 20M20 16H8"></path></svg></span><span class="card-arrow">↗</span></div>
+            <span class="card-tag">COMPARE</span>
+            <strong>Compare recommendations</strong>
+            <p>Compare clinical guidance across the system sources.</p>
+          </button>
+
+          <button class="suggestion-card" type="button" data-question="Find supporting evidence for breast cancer treatment recommendations.">
+            <div class="card-icon-row"><span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="10" cy="10" r="6"></circle><path d="M14.5 14.5L21 21"></path><path d="M8 10L10 12L13 8"></path></svg></span><span class="card-arrow">↗</span></div>
+            <span class="card-tag">EVIDENCE</span>
+            <strong>Find supporting evidence</strong>
+            <p>Locate exact sections, pages and supporting citations.</p>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/home.js"></script>
+</body>
+</html>

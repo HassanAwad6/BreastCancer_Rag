@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breast Cancer AI - Chat</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/chat.css">
+</head>
+<body class="chat-preload">
+  <div class="app-shell">
+    <aside class="sidebar chat-sidebar">
+      <div class="sidebar-top">
+        <a class="sidebar-logo" href="home.html" aria-label="Breast Cancer AI home">
+          <img src="assets/logo.svg" alt="Breast Cancer AI">
+        </a>
+        <a class="new-chat-button" href="home.html">+ New Chat</a>
+
+        <label class="sidebar-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20L16.5 16.5"></path></svg>
+          <input type="text" placeholder="Search chats ..." aria-label="Search chats">
+        </label>
+
+        <nav class="sidebar-nav" aria-label="Primary navigation">
+          <a class="nav-item active" href="home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5H20V16H8L4 20V5Z"></path></svg><span>Chats</span></a>
+          <a class="nav-item" href="uploaded-pdfs.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2H15L20 7V22H6V2Z"></path><path d="M15 2V7H20"></path></svg><span>Uploaded PDFs</span></a>
+          <a class="nav-item" href="citation-history.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"></circle><path d="M12 7V12L15 15"></path></svg><span>Citation history</span></a>
+        </nav>
+
+        <div class="sidebar-divider"></div>
+        <section class="recent-chats" aria-label="Recent chats">
+          <p>Recent chats</p>
+          <button class="recent-chat active-recent" type="button"><span class="recent-dot"></span><span><strong>Treatment options for breast cancer</strong><small>Today</small></span></button>
+          <button class="recent-chat" type="button"><span class="recent-dot"></span><span><strong>Endocrine therapy overview</strong><small>Yesterday</small></span></button>
+          <button class="recent-chat" type="button"><span class="recent-dot"></span><span><strong>NICE NG101 summary</strong><small>3 days ago</small></span></button>
+        </section>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="user-avatar" aria-hidden="true">M</div>
+        <div class="user-copy"><strong>Menna Ahmed</strong><span>Clinical workspace</span></div>
+        <button class="icon-button settings-button" type="button" aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M4 7H9M15 7H20M4 17H13M17 17H20"></path></svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="chat-workspace" id="chatWorkspace">
+      <div class="ambient-grid"></div>
+      <header class="chat-topbar">
+        <div class="chat-title"><span class="status-dot"></span>Clinical Guidelines Assistant</div>
+        <button class="dark-button" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3V15"></path><path d="M8 7L12 3L16 7"></path><path d="M5 12V20H19V12"></path></svg>
+          Export chat
+        </button>
+      </header>
+
+      <section class="conversation" id="conversation" aria-live="polite"></section>
+
+      <div class="composer-area">
+        <div class="composer">
+          <textarea id="chatInput" rows="1" placeholder="Ask a follow-up question..."></textarea>
+          <button class="icon-button" type="button" aria-label="Use microphone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11C5 15 8 18 12 18C16 18 19 15 19 11"></path><path d="M12 18V22"></path></svg>
+          </button>
+          <button class="send-button" id="chatSendButton" type="button" aria-label="Send question">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 3L10 14"></path><path d="M21 3L14 21L10 14L3 10L21 3Z"></path></svg>
+          </button>
+        </div>
+        <p>Answers are grounded only in the clinical sources available in the system.</p>
+      </div>
+    </main>
+
+    <aside class="evidence-drawer closed" id="evidenceDrawer" aria-label="Evidence source">
+      <button class="drawer-close" id="drawerClose" type="button" aria-label="Close evidence">×</button>
+      <span class="drawer-kicker">SOURCE EVIDENCE</span>
+      <h2>Evidence source</h2>
+      <div class="verified-badge">✓ Verified source</div>
+      <div class="drawer-divider"></div>
+
+      <div class="document-heading">
+        <div class="pdf-badge">PDF</div>
+        <div><h3 id="drawerSource">NG101</h3><p>NICE Clinical Guideline</p></div>
+      </div>
+
+      <div class="meta-grid">
+        <div><span>SECTION</span><strong id="drawerSection">1.11</strong></div>
+        <div><span>PAGES</span><strong id="drawerPages">29–40</strong></div>
+      </div>
+
+      <p class="drawer-description" id="drawerDescription">Endocrine therapy for hormone receptor-positive breast cancer.</p>
+      <div class="drawer-divider"></div>
+
+      <div class="pdf-preview">
+        <div class="pdf-preview-top"><span id="drawerFilename">NG101.pdf</span><span id="drawerPageLabel">Page 29</span></div>
+        <div class="pdf-page">
+          <h4 id="drawerPreviewTitle">1.11 Endocrine therapy</h4>
+          <span class="fake-line long"></span><span class="fake-line medium"></span><span class="fake-line long"></span>
+          <div class="pdf-highlight"><span></span><p>Relevant recommendation retrieved from this guideline appears here.</p></div>
+          <span class="fake-line long"></span><span class="fake-line medium"></span><span class="fake-line short"></span>
+        </div>
+        <div class="pdf-preview-controls"><button type="button" aria-label="Previous page">‹</button><span id="drawerPageCount">29 / 108</span><button type="button" aria-label="Next page">›</button></div>
+      </div>
+
+      <button class="drawer-primary" type="button">Open Full PDF</button>
+      <button class="drawer-secondary" id="copyCitationButton" type="button">Copy Citation</button>
+    </aside>
+  </div>
+
+  <script src="js/chat.js"></script>
+</body>
+</html>

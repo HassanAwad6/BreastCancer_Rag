@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="170" viewBox="0 0 520 170" role="img" aria-label="Breast Cancer AI placeholder logo">
+  <rect width="520" height="170" fill="none"/>
+  <g transform="translate(12,16)">
+    <path d="M47 2c-13 0-25 13-25 29 0 29 31 54 51 74 19-19 49-44 49-73 0-17-11-30-25-30-12 0-21 8-24 20C69 10 59 2 47 2Z" fill="#ff739d" opacity=".95"/>
+    <path d="M32 30c7 21 21 42 42 64-12 16-22 30-31 44l-22-10c10-18 20-34 33-51-15-18-26-34-34-49 3-9 7-15 12-18Z" fill="#d93b70" opacity=".96"/>
+  </g>
+  <text x="150" y="72" font-family="Arial,Helvetica,sans-serif" font-size="50" font-weight="700" fill="#3b3b3b">BREAST</text>
+  <text x="150" y="128" font-family="Arial,Helvetica,sans-serif" font-size="50" font-weight="700" fill="#3b3b3b">CANCER<tspan fill="#ff6f9a">.AI</tspan></text>
+</svg>

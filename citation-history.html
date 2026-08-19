@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citation History - Breast Cancer AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/library.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <a class="sidebar-logo" href="home.html"><img src="assets/logo.svg" alt="Breast Cancer AI"></a>
+        <a class="new-chat-button" href="home.html">+ New Chat</a>
+        <label class="sidebar-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"></circle><path d="M20 20L16.5 16.5"></path></svg><input type="text" placeholder="Search ..."></label>
+        <nav class="sidebar-nav">
+          <a class="nav-item" href="home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5H20V16H8L4 20V5Z"></path></svg><span>Chats</span></a>
+          <a class="nav-item" href="uploaded-pdfs.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2H15L20 7V22H6V2Z"></path><path d="M15 2V7H20"></path></svg><span>Uploaded PDFs</span></a>
+          <a class="nav-item active" href="citation-history.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"></circle><path d="M12 7V12L15 15"></path></svg><span>Citation history</span></a>
+        </nav>
+      </div>
+      <div class="sidebar-bottom"><div class="user-avatar">M</div><div class="user-copy"><strong>Menna Ahmed</strong><span>Clinical workspace</span></div></div>
+    </aside>
+
+    <main class="library-main">
+      <div class="ambient-grid"></div>
+      <div class="library-glow"></div>
+      <header class="library-header">
+        <div><span class="eyebrow">EVIDENCE TRACEABILITY</span><h1>Citation History</h1><p>Review the evidence sources used in previous AI answers.</p></div>
+        <button class="secondary-button clear-history" id="clearHistoryButton" type="button">Clear history</button>
+      </header>
+
+      <div class="library-toolbar">
+        <label class="library-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"></circle><path d="M20 20L16.5 16.5"></path></svg><input id="historySearch" type="text" placeholder="Search questions, sources or sections..."></label>
+        <span class="count-pill" id="historyCount">0 citations</span>
+      </div>
+
+      <section class="history-list" id="historyList"></section>
+
+      <section class="history-empty" id="historyEmpty">
+        <div class="history-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"></circle><path d="M12 7V12L15 15"></path></svg></div>
+        <h2>No citations yet</h2>
+        <p>Evidence sources used in your AI conversations will appear here.</p>
+        <a class="new-chat-button compact" href="home.html">Start a clinical chat</a>
+      </section>
+    </main>
+  </div>
+  <script src="js/history.js"></script>
+</body>
+</html>

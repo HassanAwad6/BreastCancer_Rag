@@ -4,3 +4,5 @@ python-dotenv
 numpy
 sentence-transformers
 rank-bm25
+fastapi
+uvicorn

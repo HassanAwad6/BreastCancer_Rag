@@ -119,8 +119,8 @@ def normalize_scores(scores):
     )
     return normalized
 
-SEMANTIC_THRESHOLD = 0.8
-BM25_THRESHOLD = 1.5
+SEMANTIC_THRESHOLD = 0.75
+BM25_THRESHOLD = 1.4
 
 # 11. Hybrid retrieval
 def hybrid_query(

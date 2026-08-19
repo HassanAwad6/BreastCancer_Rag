@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinical Sources - Breast Cancer AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/library.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <a class="sidebar-logo" href="home.html"><img src="assets/logo.svg" alt="Breast Cancer AI"></a>
+        <a class="new-chat-button" href="home.html">+ New Chat</a>
+        <label class="sidebar-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"></circle><path d="M20 20L16.5 16.5"></path></svg><input type="text" placeholder="Search ..."></label>
+        <nav class="sidebar-nav">
+          <a class="nav-item" href="home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5H20V16H8L4 20V5Z"></path></svg><span>Chats</span></a>
+          <a class="nav-item active" href="uploaded-pdfs.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2H15L20 7V22H6V2Z"></path><path d="M15 2V7H20"></path></svg><span>Uploaded PDFs</span></a>
+          <a class="nav-item" href="citation-history.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"></circle><path d="M12 7V12L15 15"></path></svg><span>Citation history</span></a>
+        </nav>
+      </div>
+      <div class="sidebar-bottom"><div class="user-avatar">M</div><div class="user-copy"><strong>Menna Ahmed</strong><span>Clinical workspace</span></div></div>
+    </aside>
+
+    <main class="library-main">
+      <div class="ambient-grid"></div>
+      <div class="library-glow"></div>
+      <header class="library-header">
+        <div><span class="eyebrow">KNOWLEDGE BASE</span><h1>Clinical Sources</h1><p>Guidelines available to the Breast Cancer AI assistant.</p></div>
+        <div class="status-pill"><span class="status-dot"></span><span>Knowledge base</span><strong>Ready</strong></div>
+      </header>
+
+      <section class="info-banner">
+        <div class="banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3L19 6V11C19 16 16 19 12 21C8 19 5 16 5 11V6L12 3Z"></path><path d="M9 12L11 14L15 10"></path></svg></div>
+        <div><strong>2 verified clinical guidelines</strong><p>These sources are managed by the system and used automatically to ground AI answers.</p></div>
+      </section>
+
+      <div class="library-toolbar">
+        <label class="library-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"></circle><path d="M20 20L16.5 16.5"></path></svg><input id="sourceSearch" type="text" placeholder="Search clinical sources..."></label>
+        <span class="count-pill">2 sources</span>
+      </div>
+
+      <section class="source-list" id="sourceList">
+        <article class="source-card" data-search="nice ng101 early locally advanced breast cancer diagnosis management">
+          <div class="source-card-main">
+            <div class="pdf-badge large">PDF</div>
+            <div class="source-copy">
+              <div class="source-topline"><span class="source-code">NICE NG101</span><span class="connected-pill"><i></i>Connected</span></div>
+              <h2>Early and locally advanced breast cancer</h2>
+              <h3>Diagnosis and management</h3>
+              <p>NICE clinical guidance covering diagnosis, assessment and management of early and locally advanced breast cancer.</p>
+              <div class="source-meta"><span>NICE guideline</span><i></i><span>System source</span></div>
+            </div>
+          </div>
+          <div class="source-actions"><button class="secondary-button details-button" type="button" data-source="NG101">View details</button><button class="primary-button ask-source-button" type="button" data-source="NG101">Ask about this source <span>→</span></button></div>
+        </article>
+
+        <article class="source-card" data-search="nice cg81 advanced breast cancer diagnosis treatment">
+          <div class="source-card-main">
+            <div class="pdf-badge large">PDF</div>
+            <div class="source-copy">
+              <div class="source-topline"><span class="source-code">NICE CG81</span><span class="connected-pill"><i></i>Connected</span></div>
+              <h2>Advanced breast cancer</h2>
+              <h3>Diagnosis and treatment</h3>
+              <p>NICE clinical guidance covering assessment, systemic treatment and management of advanced breast cancer.</p>
+              <div class="source-meta"><span>NICE guideline</span><i></i><span>System source</span></div>
+            </div>
+          </div>
+          <div class="source-actions"><button class="secondary-button details-button" type="button" data-source="CG81">View details</button><button class="primary-button ask-source-button" type="button" data-source="CG81">Ask about this source <span>→</span></button></div>
+        </article>
+      </section>
+
+      <div class="empty-search" id="emptySourceSearch">No clinical source matches your search.</div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="detailsModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+      <span class="eyebrow">SYSTEM SOURCE</span>
+      <h2 id="modalTitle">NICE NG101</h2>
+      <p id="modalText"></p>
+      <div class="modal-meta"><span>Verified clinical guideline</span><span>Available to the RAG system</span></div>
+    </div>
+  </div>
+
+  <script src="js/library.js"></script>
+</body>
+</html>

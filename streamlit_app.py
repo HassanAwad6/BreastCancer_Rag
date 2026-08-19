@@ -1,61 +1,73 @@
 import os
+
 import streamlit as st
 from openai import OpenAI
 from dotenv import load_dotenv
+
 from Retrieval import hybrid_query
 
 
-# 1. PAGE SETTINGS
+# =========================================================
+# 1. PAGE CONFIG
+# =========================================================
+
 st.set_page_config(
     page_title="BreastCancer.ai",
-    page_icon="🩺",
-    layout="centered"
+    page_icon="🎗️",
+    layout="wide"
 )
 
 
-# 2. LOAD API KEY
+# =========================================================
+# 2. ENVIRONMENT
+# =========================================================
+
 load_dotenv()
 
 
-def get_groq_api_key():
-
-    # First try Streamlit Cloud secrets
-    try:
-        if "GROQ_API_KEY" in st.secrets:
-            return st.secrets["GROQ_API_KEY"]
-    except Exception:
-        pass
-
-    # If running locally, use .env
-    return os.getenv("GROQ_API_KEY")
-
-
-GROQ_API_KEY = get_groq_api_key()
+# First try Streamlit Cloud secrets.
+# If running locally, fall back to .env.
+try:
+    GROQ_API_KEY = st.secrets.get(
+        "GROQ_API_KEY",
+        None
+    )
+except Exception:
+    GROQ_API_KEY = None
 
 
 if not GROQ_API_KEY:
-    st.error("GROQ_API_KEY was not found.")
-    st.stop()
-
-
-# 3. MODEL NAME
-GROQ_MODEL = "openai/gpt-oss-20b"
-
-
-# 4. CREATE GROQ CLIENT
-@st.cache_resource
-def get_groq_client():
-
-    return OpenAI(
-        api_key=GROQ_API_KEY,
-        base_url="https://api.groq.com/openai/v1"
+    GROQ_API_KEY = os.getenv(
+        "GROQ_API_KEY"
     )
 
 
-client = get_groq_client()
+if not GROQ_API_KEY:
+
+    st.error(
+        "GROQ_API_KEY was not found."
+    )
+
+    st.stop()
 
 
-# 5. SYSTEM PROMPT
+# =========================================================
+# 3. GROQ CLIENT
+# =========================================================
+
+GROQ_MODEL = "openai/gpt-oss-20b"
+
+
+client = OpenAI(
+    api_key=GROQ_API_KEY,
+    base_url="https://api.groq.com/openai/v1"
+)
+
+
+# =========================================================
+# 4. SYSTEM PROMPT
+# =========================================================
+
 SYSTEM_PROMPT = """
 You are a question-answering assistant for NICE breast cancer guidelines.
 
@@ -114,12 +126,12 @@ Citation:
 - Every citation MUST include:
   1. The full NICE guideline name.
   2. The section number.
-  3. The recommendation number, only if it explicitly appears in the retrieved content.
-  4. The exact page number or page range provided in the retrieved context.
+  3. The recommendation number, only if it explicitly appears.
+  4. The exact page number or page range supplied in the retrieved context.
 
 - NEVER omit the page number when giving a citation.
-- Copy the page information exactly from the supporting retrieved chunk.
-- Do not guess or calculate a page number.
+- Copy page information exactly from the retrieved context.
+- Do not guess or calculate page numbers.
 
 Confidence and Safety:
 - Confidence: High, Medium, or Low.
@@ -134,7 +146,7 @@ Do NOT provide Recommendations.
 Do NOT provide Supporting Evidence.
 Do NOT cite any retrieved source, section, recommendation number, or page.
 
-Instead return:
+Return:
 
 Insufficient Context:
 The retrieved NICE guideline context does not contain information that supports
@@ -150,20 +162,36 @@ Confidence and Safety:
 """
 
 
-# 6. BUILD RETRIEVED CONTEXT
+# =========================================================
+# 5. BUILD RETRIEVED CONTEXT
+# =========================================================
+
 def build_context(results):
 
     context_parts = []
 
+
     for result in results:
 
-        if result["start_page"] == result["end_page"]:
-            page_info = f"Page: {result['start_page']}"
-        else:
+        if (
+            result["start_page"]
+            ==
+            result["end_page"]
+        ):
+
             page_info = (
-                f"Pages: {result['start_page']} - "
+                f"Page: "
+                f"{result['start_page']}"
+            )
+
+        else:
+
+            page_info = (
+                f"Pages: "
+                f"{result['start_page']} - "
                 f"{result['end_page']}"
             )
+
 
         context_part = (
             f"Source: {result['source_name']}\n"
@@ -175,229 +203,299 @@ def build_context(results):
             f"{result['text']}"
         )
 
-        context_parts.append(context_part)
+
+        context_parts.append(
+            context_part
+        )
+
 
     return (
         "\n\n"
         "-----------------------------"
         "\n\n"
-    ).join(context_parts)
+    ).join(
+        context_parts
+    )
 
 
-# 7. WEBSITE HEADER
-st.title("BreastCancer.ai")
+# =========================================================
+# 6. ASK RAG
+# =========================================================
 
-st.caption(
-    "NICE Breast Cancer Guideline Assistant"
-)
+def ask_rag(question):
 
-st.info(
-    "Answers are based only on the selected NICE "
-    "breast cancer guideline sources and do not "
-    "replace professional medical judgement."
-)
+    # -----------------------------------------------------
+    # RETRIEVAL
+    # -----------------------------------------------------
 
-
-# 8. CHAT HISTORY
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+    results = hybrid_query(
+        question,
+        top_k=3
+    )
 
 
-# Display previous messages
-for message in st.session_state.messages:
+    # -----------------------------------------------------
+    # THRESHOLD REJECTION
+    # -----------------------------------------------------
 
-    with st.chat_message(
-        message["role"]
-    ):
+    if not results:
 
-        st.markdown(
-            message["content"]
-        )
+        return {
+            "status": "insufficient",
 
-
-# 9. QUESTION INPUT
-question = st.chat_input(
-    "Ask a question about the NICE guidelines..."
-)
-
-# 10. PROCESS QUESTION
-if question:
-    question = question.strip()
-    # Save user message
-    st.session_state.messages.append({
-        "role": "user",
-        "content": question
-    })
-    # Display user message
-    with st.chat_message("user"):
-        st.markdown(
-            question
-        )
-
-    # Assistant response
-    with st.chat_message("assistant"):
-        with st.spinner(
-            "Searching NICE guidelines..."
-        ):
-            # RETRIEVAL
-            results = hybrid_query(
-                question,
-                top_k=3
-            )
-
-
-            # TEMPORARY DEBUG
-            if results:
-                with st.expander(
-                    "Debug: Retrieved Chunks"
-                ):
-                    for result in results:
-                        st.write(
-                            f"### Rank {result['rank']}"
-                        )
-                        st.write(
-                            "Section:",
-                            result["section"]
-                        )
-                        st.write(
-                            "Section Name:",
-                            result["section_name"]
-                        )
-                        st.write(
-                            "BGE:",
-                            round(
-                                result["semantic_score"],
-                                4
-                            )
-                        )
-                        st.write(
-                            "BM25:",
-                            round(
-                                result["keyword_score"],
-                                4
-                            )
-                        )
-                        st.write(
-                            "Hybrid:",
-                            round(
-                                result["hybrid_score"],
-                                4
-                            )
-                        )
-                        st.write(
-                            "Pages:",
-                            result["start_page"],
-                            "-",
-                            result["end_page"]
-                        )
-                        st.write(
-                            result["text"]
-                        )
-                        st.divider()
-
-            # THRESHOLD REJECTION
-            if not results:
-
-                answer = """
+            "answer": """
 ### Insufficient Context
+
 The retrieved NICE guideline context does not contain information that supports this question.
+
 ### Citation
+
 No applicable NICE guideline citation was found for this question.
+
 ### Confidence and Safety
+
 - **Confidence: Low**
 - The retrieval system did not find sufficiently relevant NICE guideline evidence.
 - No answer was generated from outside knowledge.
-"""
+""",
 
-            # QUESTION PASSED THRESHOLD
-            else:
+            "sources": []
+        }
 
-                context = build_context(
-                    results
-                )
 
-                user_prompt = f"""
+    # -----------------------------------------------------
+    # BUILD CONTEXT
+    # -----------------------------------------------------
+
+    context = build_context(
+        results
+    )
+
+
+    user_prompt = f"""
 Question:
 {question}
 
 Retrieved NICE guideline context:
+
 {context}
 
 Answer the question using ONLY the retrieved context.
 """
 
 
-                try:
+    # -----------------------------------------------------
+    # GENERATION
+    # -----------------------------------------------------
 
-                    response = (
-                        client
-                        .chat
-                        .completions
-                        .create(
+    try:
 
-                            model=GROQ_MODEL,
+        response = (
+            client
+            .chat
+            .completions
+            .create(
 
-                            messages=[
-                                {
-                                    "role": "system",
-                                    "content": SYSTEM_PROMPT
-                                },
-                                {
-                                    "role": "user",
-                                    "content": user_prompt
-                                }
-                            ],
+                model=GROQ_MODEL,
 
-                            temperature=0,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": SYSTEM_PROMPT
+                    },
+                    {
+                        "role": "user",
+                        "content": user_prompt
+                    }
+                ],
 
-                            reasoning_effort="low",
+                temperature=0,
 
-                            max_completion_tokens=2048
-                        )
-                    )
+                reasoning_effort="low",
 
-
-                    answer = (
-                        response
-                        .choices[0]
-                        .message
-                        .content
-                    )
-
-
-                    if not answer:
-
-                        answer = (
-                            "The AI model returned "
-                            "an empty response."
-                        )
-
-
-                except Exception as error:
-
-                    print(
-                        "Groq error:",
-                        error
-                    )
-
-                    answer = (
-                        "The AI service is temporarily "
-                        "unavailable. Please try again."
-                    )
-
-
-        # ---------------------------------
-        # DISPLAY ANSWER
-        # ---------------------------------
-        st.markdown(
-            answer
+                max_completion_tokens=2048
+            )
         )
 
 
-    # ---------------------------------
-    # SAVE ASSISTANT MESSAGE
-    # ---------------------------------
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": answer
-    })
+        answer = (
+            response
+            .choices[0]
+            .message
+            .content
+        )
+
+
+    except Exception as error:
+
+        print(
+            "Groq error:",
+            error
+        )
+
+
+        return {
+            "status": "error",
+
+            "answer":
+                "The AI service is temporarily unavailable.",
+
+            "sources": []
+        }
+
+
+    # -----------------------------------------------------
+    # LLM REJECTION
+    # -----------------------------------------------------
+
+    if (
+        answer
+        and
+        "Insufficient Context:" in answer
+    ):
+
+        return {
+            "status": "insufficient",
+            "answer": answer,
+            "sources": []
+        }
+
+
+    # -----------------------------------------------------
+    # SOURCES
+    # -----------------------------------------------------
+
+    sources = []
+
+
+    for result in results:
+
+        sources.append({
+
+            "source":
+                result["source_name"],
+
+            "section":
+                result["section"],
+
+            "section_name":
+                result["section_name"],
+
+            "start_page":
+                result["start_page"],
+
+            "end_page":
+                result["end_page"],
+
+            "chunk_id":
+                result["chunk_id"],
+
+            "semantic_score":
+                result["semantic_score"],
+
+            "keyword_score":
+                result["keyword_score"],
+
+            "hybrid_score":
+                result["hybrid_score"]
+        })
+
+
+    return {
+        "status": "success",
+        "answer": answer,
+        "sources": sources
+    }
+
+
+# =========================================================
+# 7. TEMPORARY STREAMLIT TEST UI
+# =========================================================
+#
+# This is NOT your final design.
+# It only verifies that Streamlit can run the full RAG.
+#
+# Your HTML/CSS/JS interface will be connected in Step 2.
+# =========================================================
+
+st.title(
+    "🎗️ BreastCancer.ai"
+)
+
+st.caption(
+    "NICE Breast Cancer Guidelines RAG"
+)
+
+
+question = st.chat_input(
+    "Ask a question about the NICE guidelines..."
+)
+
+
+if question:
+
+    # User question
+    with st.chat_message(
+        "user"
+    ):
+
+        st.write(
+            question
+        )
+
+
+    # AI
+    with st.chat_message(
+        "assistant"
+    ):
+
+        with st.spinner(
+            "Searching NICE guidelines..."
+        ):
+
+            result = ask_rag(
+                question
+            )
+
+
+        st.markdown(
+            result["answer"]
+        )
+
+
+        # ---------------------------------------------
+        # SOURCES
+        # ---------------------------------------------
+
+        if (
+            result["status"] == "success"
+            and
+            result["sources"]
+        ):
+
+            with st.expander(
+                "Retrieved NICE evidence"
+            ):
+
+                for index, source in enumerate(
+                    result["sources"],
+                    start=1
+                ):
+
+                    st.markdown(
+                        f"""
+**Source {index}**
+
+**Guideline:** {source["source"]}
+
+**Section:** {source["section"]}
+
+**Section name:** {source["section_name"]}
+
+**Pages:** {source["start_page"]}–{source["end_page"]}
+
+**Chunk ID:** {source["chunk_id"]}
+"""
+                    )
+
+                    st.divider()

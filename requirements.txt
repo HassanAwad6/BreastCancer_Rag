@@ -1,8 +1,6 @@
-streamlit
+streamlit>=1.61.0
 openai
 python-dotenv
 numpy
 sentence-transformers
 rank-bm25
-fastapi
-uvicorn
